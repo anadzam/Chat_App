@@ -6,19 +6,22 @@
 //
 
 import Foundation
-import CoreMotion
 import UIKit
 
 class SwitchButton: UIButton {
-  var view = TopView()
-
-    var status: Bool = false {
+ 
+    private var isOn: Bool = false {
         didSet {
             self.update()
         }
     }
-    var onImage = UIImage(named: "lightMode")
-    var offImage = UIImage(named: "darkMode")
+
+    // enum name caital
+    enum isOnMode {
+        static let onImage = UIImage(assetIdentifier: .lightMode)
+        static let offImage = UIImage(assetIdentifier: .darkMode)
+    }
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -29,32 +32,20 @@ class SwitchButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func update() {
+    private func update() {
         UIView.transition(with: self, duration: 0.10, options: .transitionCrossDissolve, animations: {
-            self.status ? self.setImage(self.onImage, for: .normal) : self.setImage(self.offImage, for: .normal)
+            self.isOn ? self.setImage(isOnMode.onImage, for: .normal) : self.setImage(isOnMode.offImage, for: .normal)
         }, completion: nil)
         
-       
+        
     }
-    func toggle() {
-        self.status ? self.setStatus(false) : self.setStatus(true)
-       
-//        let status = switchButton.status
-               
-//                   if status == true {
-//                       self.view.backgroundColor = UIColor.darkMode
-//                   } else {
-//                       self.view.backgroundColor = UIColor.white
-//                   }
-//               print("toggle tapped")
-//
+    private func toggle() {
+        self.isOn ? self.setStatus(false) : self.setStatus(true)
     }
-   
     
     func setStatus(_ status: Bool) {
-        self.status = status
-//
-        
+        self.isOn = status
+        //
     }
 
     
@@ -70,7 +61,5 @@ class SwitchButton: UIButton {
         impactFeedbackgenerator.impactOccurred()
     }
     
-    
-  
     
 }
