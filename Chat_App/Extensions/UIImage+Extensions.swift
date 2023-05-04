@@ -13,7 +13,7 @@ extension UIImage {
         case lightMode
         case darkMode
         case sendButton
-        case centerLine = "Rectangle"
+        case centerLine = "rectangle"
         
     }
     convenience init(assetIdentifier: AssetIdentifier) {

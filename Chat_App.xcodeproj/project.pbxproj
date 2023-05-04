@@ -18,6 +18,8 @@
 		91A5F75629F2B9490049F77D /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A5F75529F2B9490049F77D /* ChatView.swift */; };
 		91A5F75A29F2B9850049F77D /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A5F75929F2B9850049F77D /* UIView+Extensions.swift */; };
 		91A5F75C29F2B9A90049F77D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 91A5F75B29F2B9A90049F77D /* Main.storyboard */; };
+		91AC85F329FEB43200AC28EB /* RightBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AC85F229FEB43200AC28EB /* RightBubble.swift */; };
+		91AC85F529FEB44200AC28EB /* LeftBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AC85F429FEB44200AC28EB /* LeftBubble.swift */; };
 		91DCE68129F5A13B00AE0684 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DCE68029F5A13B00AE0684 /* UIColor+Extensions.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +37,8 @@
 		91A5F75529F2B9490049F77D /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		91A5F75929F2B9850049F77D /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		91A5F75B29F2B9A90049F77D /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		91AC85F229FEB43200AC28EB /* RightBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightBubble.swift; sourceTree = "<group>"; };
+		91AC85F429FEB44200AC28EB /* LeftBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftBubble.swift; sourceTree = "<group>"; };
 		91DCE68029F5A13B00AE0684 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -105,6 +109,8 @@
 			children = (
 				91A5F75329F2B92B0049F77D /* SwitchButton.swift */,
 				91A5F75529F2B9490049F77D /* ChatView.swift */,
+				91AC85F229FEB43200AC28EB /* RightBubble.swift */,
+				91AC85F429FEB44200AC28EB /* LeftBubble.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -180,9 +186,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91AC85F329FEB43200AC28EB /* RightBubble.swift in Sources */,
 				91A5F75429F2B92B0049F77D /* SwitchButton.swift in Sources */,
 				91A5F73C29F2B5C10049F77D /* ViewController.swift in Sources */,
 				91A5F74229F2B5C10049F77D /* Chat_App.xcdatamodeld in Sources */,
+				91AC85F529FEB44200AC28EB /* LeftBubble.swift in Sources */,
 				91A5F75A29F2B9850049F77D /* UIView+Extensions.swift in Sources */,
 				91A5F73829F2B5C10049F77D /* AppDelegate.swift in Sources */,
 				91A5F75629F2B9490049F77D /* ChatView.swift in Sources */,

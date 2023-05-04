@@ -15,33 +15,8 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Y1-lu-EyV" customClass="ChatView" customModule="Chat_App" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="441.66666666666674" width="393" height="410.33333333333326"/>
-                                <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" summaryElement="YES"/>
-                                </accessibility>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2gn-3C-LZg" customClass="ChatView" customModule="Chat_App" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="59" width="393" height="376.66666666666669"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" summaryElement="YES"/>
-                                </accessibility>
-                            </view>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="2gn-3C-LZg" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="2px-WO-8bR"/>
-                            <constraint firstItem="2gn-3C-LZg" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="9Or-oA-Z7m"/>
-                            <constraint firstItem="5Y1-lu-EyV" firstAttribute="top" secondItem="2gn-3C-LZg" secondAttribute="bottom" constant="6" id="E32-Hd-GYH"/>
-                            <constraint firstItem="5Y1-lu-EyV" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="Ecx-js-Kli"/>
-                            <constraint firstItem="2gn-3C-LZg" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="MK5-Cl-ygY"/>
-                            <constraint firstItem="5Y1-lu-EyV" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="QLJ-z1-XLN"/>
-                            <constraint firstItem="5Y1-lu-EyV" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="441.66666666666674" id="mUF-OJ-Fnv"/>
-                            <constraint firstAttribute="bottom" secondItem="5Y1-lu-EyV" secondAttribute="bottom" id="w9I-QO-jxN"/>
-                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

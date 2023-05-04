@@ -7,18 +7,23 @@
 
 import Foundation
 import UIKit
+import CoreData
 
-class ChatView: UIView, UITextViewDelegate, UITableViewDelegate, UITableViewDataSource {
-    
+class ChatView: UIView, UITextViewDelegate {
     let tableView = UITableView()
-    var sentMessages = [String]()
+    let leftBubble = LeftBubble()
+    let rightBubble = RightBubble()
+    var sentMessages = [Message]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
+   
+
+
     private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.distribution = .equalSpacing
         stackView.spacing = 12
+        stackView.backgroundColor = .clear
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         return stackView
@@ -48,15 +53,44 @@ class ChatView: UIView, UITextViewDelegate, UITableViewDelegate, UITableViewData
         return button
     }()
     
+    //MARK: - load messages from coreData
+    func loadMessages(with request: NSFetchRequest<Message> = Message.fetchRequest()) {
+//        commented since we have that argument inside the function
+//        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        do {
+            sentMessages = try context.fetch(request)
+        } catch {
+            print("Error fetching data from context \(error)")
+        }
+        
+        tableView.reloadData()
+        
+    }
     //in progress
     @objc private func sendMessage(sender: UIButton) {
-        let messageText = textView.text ?? ""
-        sentMessages.append(messageText)
+//        let messageText = textView.text ?? ""
+//        sentMessages.append(messageText)
+        let newText = Message(context: self.context)
+        newText.text = textView.text!
+        self.sentMessages.append(newText)
         textView.text = ""
         saveItems()
         print("message sent")
-        print(sentMessages.count)
     }
+    
+    //MARK: - to remove entity data
+//    func removeCoreData() {
+//
+//        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Message")
+//        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+//
+//        do {
+//            try context.execute(deleteRequest)
+//        } catch let error as NSError {
+//            // TODO: handle the error
+//            print(error.localizedDescription)
+//        }
+//    }
     
     //MARK: - TableView Data Manipulation method
     func saveItems() {
@@ -86,9 +120,10 @@ class ChatView: UIView, UITextViewDelegate, UITableViewDelegate, UITableViewData
         }
     }
     
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    override init(frame:CGRect) {
+         super.init(frame:frame)
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         textViewDidBeginEditing(textView)
         textViewDidEndEditing(textView)
@@ -96,11 +131,34 @@ class ChatView: UIView, UITextViewDelegate, UITableViewDelegate, UITableViewData
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        layoutUI()
-        //custom logic goes here
+        componentArranger()
+        loadMessages()
+     }
+    
+    required init?(coder aDecoder: NSCoder) {
+       super.init(coder: aDecoder)
     }
     
-    private func layoutUI() {
+    
+//    override func awakeFromNib() {
+//        super.awakeFromNib()
+////        removeCoreData()
+//        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+//        tableView.backgroundColor = .clear
+//        tableView.separatorStyle = .none
+//        textViewDidBeginEditing(textView)
+//        textViewDidEndEditing(textView)
+//        textView.delegate = self
+//        tableView.delegate = self
+//        tableView.dataSource = self
+//        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+//        componentArranger()
+//        loadMessages()
+//        //custom logic goes here
+//    }
+    
+    private func componentArranger() {
+        rightBubble.translatesAutoresizingMaskIntoConstraints = true
         addSubview(stackView)
         addSubview(sendButton)
         stackView.addArrangedSubview(tableView)
@@ -111,11 +169,14 @@ class ChatView: UIView, UITextViewDelegate, UITableViewDelegate, UITableViewData
     //MARK: - set up stackView and its components contraints
     func setUpConstraints() {
         let stackGap: CGFloat = 20
+        
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: stackGap + 30),
+            stackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             stackView.leftAnchor.constraint(equalTo: leftAnchor, constant: stackGap),
             stackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -stackGap),
-            stackView.heightAnchor.constraint(equalToConstant: 300)
+            
+//            stackView.heightAnchor.constraint(equalToConstant: 300)
+            stackView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor)
         ])
         NSLayoutConstraint.activate([
             //          have to consider one more time
@@ -138,7 +199,12 @@ class ChatView: UIView, UITextViewDelegate, UITableViewDelegate, UITableViewData
         ])
     }
     
-    //MARK: - tableView datasource methods
+    
+}
+
+//MARK: - tableView datasource methods as an extension
+
+extension ChatView: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         sentMessages.count
@@ -147,10 +213,30 @@ class ChatView: UIView, UITextViewDelegate, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.textAlignment = .right
-        cell.textLabel?.text = sentMessages[indexPath.row]
+        cell.selectionStyle = .none
+        cell.backgroundColor = .clear
+//        cell.contentView.addSubview(rightBubble)
+        let message = sentMessages[indexPath.row]
+        cell.textLabel?.text = message.text
         return cell
-        
     }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            return UITableView.automaticDimension
+        } else {
+            return 40
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            return UITableView.automaticDimension
+        } else {
+            return 40
+        }
+    }
+    
     
 }
 

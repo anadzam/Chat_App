@@ -9,15 +9,16 @@ import Foundation
 import UIKit
 
 class SwitchButton: UIButton {
- 
+    var chatView = ChatView()
+    
+    
     private var isOn: Bool = false {
         didSet {
             self.update()
         }
     }
-
-    // enum name caital
-    enum isOnMode {
+    
+    enum IsOnMode {
         static let onImage = UIImage(assetIdentifier: .lightMode)
         static let offImage = UIImage(assetIdentifier: .darkMode)
     }
@@ -34,7 +35,7 @@ class SwitchButton: UIButton {
     
     private func update() {
         UIView.transition(with: self, duration: 0.10, options: .transitionCrossDissolve, animations: {
-            self.isOn ? self.setImage(isOnMode.onImage, for: .normal) : self.setImage(isOnMode.offImage, for: .normal)
+            self.isOn ? self.setImage(IsOnMode.onImage, for: .normal) : self.setImage(IsOnMode.offImage, for: .normal)
         }, completion: nil)
         
         
@@ -45,9 +46,12 @@ class SwitchButton: UIButton {
     
     func setStatus(_ status: Bool) {
         self.isOn = status
-        //
+        //need to change with delegate
+        if let parentView = self.superview {
+            parentView.backgroundColor = self.isOn ? .white : .darkMode
+        }
+        
     }
-
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
@@ -60,6 +64,7 @@ class SwitchButton: UIButton {
         impactFeedbackgenerator.prepare()
         impactFeedbackgenerator.impactOccurred()
     }
+    
     
     
 }
