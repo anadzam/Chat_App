@@ -17,5 +17,6 @@ extension UIColor {
     static let borderColor = UIColor(r: 159.0, g: 96.0, b: 225.0)
     static let darkMode = UIColor(r: 22, g: 0, b: 57)
     static let bubbleColor = UIColor(r: 218, g: 194, b: 255)
+    static let textColor = UIColor(r: 25, g: 25, b: 25)
     
 }

@@ -12,7 +12,7 @@ class SwitchButton: UIButton {
     var chatView = ChatView()
     
     
-    private var isOn: Bool = false {
+     var isOn: Bool = false {
         didSet {
             self.update()
         }
@@ -47,9 +47,9 @@ class SwitchButton: UIButton {
     func setStatus(_ status: Bool) {
         self.isOn = status
         //need to change with delegate
-        if let parentView = self.superview {
-            parentView.backgroundColor = self.isOn ? .white : .darkMode
-        }
+//        if let parentView = self.superview {
+//            parentView.backgroundColor = self.isOn ? .white : .darkMode
+//        }
         
     }
     

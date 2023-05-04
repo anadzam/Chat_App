@@ -17,6 +17,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        switchButton.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         view.addSubview(topChatView)
         view.addSubview(centerLine)
         view.addSubview(switchButton)
@@ -27,6 +28,19 @@ class ViewController: UIViewController, UITextFieldDelegate {
         constraintsAssigner()
      
     }
+    //MARK: - change background color
+    @objc func didTapButton() {
+        if switchButton.isOn {
+            view.backgroundColor = .darkMode
+            topChatView.textView.backgroundColor = .darkMode
+            bottomChatView.textView.backgroundColor = .darkMode
+        } else {
+            view.backgroundColor = .white
+            topChatView.textView.backgroundColor = .white
+            bottomChatView.textView.backgroundColor = .white
+        }
+    }
+    
     
     //MARK: - Yellow center line
     let centerLine: UIImageView = {
@@ -47,7 +61,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         ])
         
         NSLayoutConstraint.activate([
-            topChatView.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
+            topChatView.topAnchor.constraint(equalTo: view.topAnchor, constant: 75),
             topChatView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
             topChatView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             topChatView.bottomAnchor.constraint(equalTo: centerLine.safeAreaLayoutGuide.topAnchor, constant: -5)
