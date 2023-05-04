@@ -11,18 +11,17 @@ import CoreData
 
 class ChatView: UIView, UITextViewDelegate {
     let tableView = UITableView()
-    let leftBubble = LeftBubble()
-    let rightBubble = RightBubble()
+//    let leftBubble = LeftBubble()
+//    let rightBubble = RightBubble()
     var sentMessages = [Message]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
     
     
     private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.distribution = .equalSpacing
-        stackView.spacing = 12
+        stackView.spacing = Constants.StackView.spacing
         stackView.backgroundColor = .clear
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -31,11 +30,11 @@ class ChatView: UIView, UITextViewDelegate {
     
     public var textView: UITextView = {
         let text = UITextView()
-        text.layer.borderWidth = 1.0
-        text.layer.borderColor = UIColor.borderColor.cgColor
-        text.layer.cornerRadius = 23
+        text.layer.borderWidth = Constants.TextViewCon.borderWidth
+        text.layer.borderColor = Constants.Colors.borderColor.cgColor
+        text.layer.cornerRadius = Constants.TextViewCon.cornerRadius
         text.clipsToBounds = true
-        text.font = UIFont.systemFont(ofSize: 16)
+        text.font = UIFont.systemFont(ofSize: Constants.TextViewCon.fontSize)
         text.textAlignment = .left
         text.translatesAutoresizingMaskIntoConstraints = false
         text.contentInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 70)
@@ -53,7 +52,7 @@ class ChatView: UIView, UITextViewDelegate {
         return button
     }()
     
-    //MARK: - load messages from coreData
+    //MARK: - Load messages from coreData
     func loadMessages(with request: NSFetchRequest<Message> = Message.fetchRequest()) {
         //        commented since we have that argument inside the function
         //        let request: NSFetchRequest<Item> = Item.fetchRequest()
@@ -78,7 +77,7 @@ class ChatView: UIView, UITextViewDelegate {
         print("message sent")
     }
     
-    //MARK: - to remove entity data
+    //MARK: - To remove entity data
     //need for testing
     //    func removeCoreData() {
     //
@@ -104,10 +103,10 @@ class ChatView: UIView, UITextViewDelegate {
         tableView.reloadData()
     }
     
-    //MARK: - textView custom placeholder
-    
+    //MARK: - TextView custom placeholder
+
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == UIColor.placeholderColor {
+        if textView.textColor == Constants.Colors.placeholderColor {
             textView.text = ""
             textView.textColor = UIColor.black
         }
@@ -115,19 +114,18 @@ class ChatView: UIView, UITextViewDelegate {
     
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
-            textView.text = "დაწერეთ შეტყობინება"
-            textView.textColor = UIColor.placeholderColor
+            textView.text = Constants.TextViewCon.placeholder
+            textView.textColor = Constants.Colors.placeholderColor
         }
     }
     
     override init(frame:CGRect) {
-        super.init(frame:frame)
+        super.init(frame: .zero)
         //        removeCoreData()
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         textViewDidBeginEditing(textView)
         textViewDidEndEditing(textView)
         textView.delegate = self
-        tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         componentArranger()
@@ -146,42 +144,40 @@ class ChatView: UIView, UITextViewDelegate {
         setUpConstraints()
     }
     
-    //MARK: - set up stackView and its components contraints
+    //MARK: - Set up stackView and its components contraints
     func setUpConstraints() {
-        let stackGap: CGFloat = 20
+      
         
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            stackView.leftAnchor.constraint(equalTo: leftAnchor, constant: stackGap),
-            stackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -stackGap),
+            stackView.leftAnchor.constraint(equalTo: leftAnchor, constant: Constants.StackView.gap),
+            stackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -Constants.StackView.gap),
             stackView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor)
         ])
         NSLayoutConstraint.activate([
             //          have to consider one more time
-            
-            tableView.topAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.topAnchor, constant: 50),
-            tableView.heightAnchor.constraint(equalToConstant: 300)
+            tableView.topAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.topAnchor, constant: Constants.TableView.top),
+            tableView.heightAnchor.constraint(equalToConstant: Constants.TableView.height)
         ])
         NSLayoutConstraint.activate([
-            textView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 2),
-            textView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 2),
-            textView.bottomAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.bottomAnchor, constant: 100),
-            textView.heightAnchor.constraint(equalToConstant: 50)
+            textView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: Constants.TextViewCon.trailing),
+            textView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: Constants.TextViewCon.trailing),
+            textView.bottomAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.bottomAnchor, constant: Constants.TextViewCon.bottom),
+            textView.heightAnchor.constraint(equalToConstant: Constants.TextViewCon.height)
         ])
         NSLayoutConstraint.activate([
-            sendButton.trailingAnchor.constraint(equalTo: textView.trailingAnchor,constant: -16),
-            sendButton.topAnchor.constraint(equalTo: textView.topAnchor, constant: 8),
-            sendButton.widthAnchor.constraint(equalToConstant: 32),
-            sendButton.heightAnchor.constraint(equalToConstant: 32)
+            sendButton.trailingAnchor.constraint(equalTo: textView.trailingAnchor,constant: -Constants.SendButtonCon.trailing),
+            sendButton.topAnchor.constraint(equalTo: textView.topAnchor, constant: Constants.SendButtonCon.top)
+//            sendButton.widthAnchor.constraint(equalToConstant: 32),
+//            sendButton.heightAnchor.constraint(equalToConstant: 32)
         ])
     }
     
-    
 }
 
-//MARK: - tableView datasource methods as an extension
+//MARK: - TableView datasource methods as an extension
 
-extension ChatView: UITableViewDelegate, UITableViewDataSource {
+extension ChatView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         sentMessages.count
@@ -191,32 +187,14 @@ extension ChatView: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
-        cell.textLabel?.textColor = .textColor
+        cell.textLabel?.textColor = Constants.Colors.textColor
         cell.textLabel?.textAlignment = .right
         cell.selectionStyle = .none
         cell.backgroundColor = .clear
-        //        cell.contentView.addSubview(rightBubble)
         let message = sentMessages[indexPath.row]
         cell.textLabel?.text = message.text
         return cell
     }
     
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        if indexPath.section == 0 {
-//            return UITableView.automaticDimension
-//        } else {
-//            return 40
-//        }
-//    }
-//
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            return UITableView.automaticDimension
-        } else {
-            return 40
-        }
-    }
-    
     
 }
-

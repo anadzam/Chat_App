@@ -9,14 +9,8 @@ import Foundation
 import UIKit
 
 extension UIImage {
-    enum AssetIdentifier: String {
-        case lightMode
-        case darkMode
-        case sendButton
-        case centerLine = "rectangle"
-        
-    }
-    convenience init(assetIdentifier: AssetIdentifier) {
+  
+    convenience init(assetIdentifier: Constants.AssetIdentifier) {
         self.init(named: assetIdentifier.rawValue)!
     }
 }

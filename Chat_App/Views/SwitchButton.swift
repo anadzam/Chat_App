@@ -9,8 +9,7 @@ import Foundation
 import UIKit
 
 class SwitchButton: UIButton {
-    var chatView = ChatView()
-    
+        
     
      var isOn: Bool = false {
         didSet {

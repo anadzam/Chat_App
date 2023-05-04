@@ -21,15 +21,15 @@ class RightBubble: UIView {
     override func draw(_ rect: CGRect) {
         
         let mainTextBubble = UIBezierPath(roundedRect: CGRect(x: frame.minX, y: frame.minY, width: 200, height: 100), cornerRadius: 25)
-        UIColor.bubbleColor.setFill()
+        Constants.Colors.bubbleColor.setFill()
         mainTextBubble.fill()
         
         let firstBubble = UIBezierPath(ovalIn: CGRect(x: frame.minX + mainTextBubble.bounds.width - 10, y: frame.minY + mainTextBubble.bounds.height - 15, width: 20, height: 20))
-        UIColor.bubbleColor.setFill()
+        Constants.Colors.bubbleColor.setFill()
         firstBubble.fill()
         
         let secondBubble = UIBezierPath(ovalIn: CGRect(x: frame.minX + mainTextBubble.bounds.width + 10, y: frame.minY + mainTextBubble.bounds.height, width: 10, height: 10))
-        UIColor.bubbleColor.setFill()
+        Constants.Colors.bubbleColor.setFill()
         secondBubble.fill()
     }
     

@@ -14,7 +14,6 @@ class ViewController: UIViewController, UITextFieldDelegate {
     let topChatView = ChatView()
     let bottomChatView = ChatView()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         switchButton.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
@@ -26,14 +25,16 @@ class ViewController: UIViewController, UITextFieldDelegate {
         topChatView.translatesAutoresizingMaskIntoConstraints = false
         bottomChatView.translatesAutoresizingMaskIntoConstraints = false
         constraintsAssigner()
-     
+        
     }
+    
+    
     //MARK: - change background color
     @objc func didTapButton() {
         if switchButton.isOn {
-            view.backgroundColor = .darkMode
-            topChatView.textView.backgroundColor = .darkMode
-            bottomChatView.textView.backgroundColor = .darkMode
+            view.backgroundColor = Constants.Colors.darkMode
+            topChatView.textView.backgroundColor = Constants.Colors.darkMode
+            bottomChatView.textView.backgroundColor = Constants.Colors.darkMode
         } else {
             view.backgroundColor = .white
             topChatView.textView.backgroundColor = .white
@@ -43,40 +44,39 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     
     //MARK: - Yellow center line
-    let centerLine: UIImageView = {
-        let centerLineImage = UIImageView()
-        centerLineImage.image = UIImage(assetIdentifier: .centerLine)
-        centerLineImage.translatesAutoresizingMaskIntoConstraints = false
-        return centerLineImage
+    let centerLine: UIView = {
+        let line = UIView()
+        line.backgroundColor = Constants.Colors.centreLineColor
+        line.translatesAutoresizingMaskIntoConstraints = false
+        return line
     }()
     
     //MARK: - set up constraints
     private func constraintsAssigner() {
         NSLayoutConstraint.activate([
-            centerLine.heightAnchor.constraint(equalToConstant: 6),
+            centerLine.heightAnchor.constraint(equalToConstant: Constants.CenterLine.height),
             centerLine.leftAnchor.constraint(equalTo: view.leftAnchor),
             centerLine.rightAnchor.constraint(equalTo: view.rightAnchor),
-            centerLine.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            centerLine.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 6)
+            centerLine.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: Constants.CenterLine.height)
         ])
         
         NSLayoutConstraint.activate([
-            topChatView.topAnchor.constraint(equalTo: view.topAnchor, constant: 75),
+            topChatView.topAnchor.constraint(equalTo: view.topAnchor, constant: Constants.TopChatView.top),
             topChatView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
             topChatView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-            topChatView.bottomAnchor.constraint(equalTo: centerLine.safeAreaLayoutGuide.topAnchor, constant: -5)
+            topChatView.bottomAnchor.constraint(equalTo: centerLine.topAnchor, constant: -Constants.TopChatView.bottom)
             
         ])
         NSLayoutConstraint.activate([
-            bottomChatView.topAnchor.constraint(equalTo: centerLine.safeAreaLayoutGuide.bottomAnchor, constant: 5),
+            bottomChatView.topAnchor.constraint(equalTo: centerLine.bottomAnchor, constant: Constants.BottomChatView.top),
             bottomChatView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
             bottomChatView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-            bottomChatView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
+            bottomChatView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Constants.BottomChatView.bottom)
             
         ])
         NSLayoutConstraint.activate([
-            switchButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
-            switchButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -12)
+            switchButton.topAnchor.constraint(equalTo: view.topAnchor, constant: Constants.SwitchButton.top),
+            switchButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -Constants.SwitchButton.right)
             
         ])
         
