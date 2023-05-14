@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 extension UIImage {
-  
+    
     convenience init(assetIdentifier: Constants.AssetIdentifier) {
         self.init(named: assetIdentifier.rawValue)!
     }

@@ -9,9 +9,8 @@ import Foundation
 import UIKit
 
 class SwitchButton: UIButton {
-        
     
-     var isOn: Bool = false {
+    var isOn: Bool = false {
         didSet {
             self.update()
         }
@@ -32,7 +31,7 @@ class SwitchButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func update() {
+     func update() {
         UIView.transition(with: self, duration: 0.10, options: .transitionCrossDissolve, animations: {
             self.isOn ? self.setImage(IsOnMode.onImage, for: .normal) : self.setImage(IsOnMode.offImage, for: .normal)
         }, completion: nil)
@@ -45,10 +44,6 @@ class SwitchButton: UIButton {
     
     func setStatus(_ status: Bool) {
         self.isOn = status
-        //need to change with delegate
-//        if let parentView = self.superview {
-//            parentView.backgroundColor = self.isOn ? .white : .darkMode
-//        }
         
     }
     

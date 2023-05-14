@@ -9,11 +9,10 @@ import Foundation
 import UIKit
 import CoreData
 
-class ChatView: UIView, UITextViewDelegate {
+class ChatView: UIView {
     let tableView = UITableView()
-//    let leftBubble = LeftBubble()
-//    let rightBubble = RightBubble()
     var sentMessages = [Message]()
+    var typingArea = TextView()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     
@@ -28,29 +27,7 @@ class ChatView: UIView, UITextViewDelegate {
         return stackView
     }()
     
-    public var textView: UITextView = {
-        let text = UITextView()
-        text.layer.borderWidth = Constants.TextViewCon.borderWidth
-        text.layer.borderColor = Constants.Colors.borderColor.cgColor
-        text.layer.cornerRadius = Constants.TextViewCon.cornerRadius
-        text.clipsToBounds = true
-        text.font = UIFont.systemFont(ofSize: Constants.TextViewCon.fontSize)
-        text.textAlignment = .left
-        text.translatesAutoresizingMaskIntoConstraints = false
-        text.contentInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 70)
-        
-        return text
-    }()
     
-    private lazy var sendButton: UIButton = {
-        let button = UIButton(type: .custom)
-        let buttonImage = UIImage(assetIdentifier: .sendButton)
-        button.setImage(buttonImage, for: .normal)
-        button.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        return button
-    }()
     
     //MARK: - Load messages from coreData
     func loadMessages(with request: NSFetchRequest<Message> = Message.fetchRequest()) {
@@ -66,17 +43,17 @@ class ChatView: UIView, UITextViewDelegate {
         
     }
     //in progress
-    @objc private func sendMessage(sender: UIButton) {
-        //        let messageText = textView.text ?? ""
-        //        sentMessages.append(messageText)
-        let newText = Message(context: self.context)
-        newText.text = textView.text!
-        self.sentMessages.append(newText)
-        textView.text = ""
-        saveItems()
-        print("message sent")
-    }
-    
+    //    @objc private func sendMessage(sender: UIButton) {
+    //        //        let messageText = textView.text ?? ""
+    //        //        sentMessages.append(messageText)
+    //        let newText = Message(context: self.context)
+    //        newText.text = textView.text!
+    //        self.sentMessages.append(newText)
+    //        textView.text = ""
+    //        saveItems()
+    //        print("message sent")
+    //    }
+    //
     //MARK: - To remove entity data
     //need for testing
     //    func removeCoreData() {
@@ -103,29 +80,14 @@ class ChatView: UIView, UITextViewDelegate {
         tableView.reloadData()
     }
     
-    //MARK: - TextView custom placeholder
-
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == Constants.Colors.placeholderColor {
-            textView.text = ""
-            textView.textColor = UIColor.black
-        }
-    }
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.isEmpty {
-            textView.text = Constants.TextViewCon.placeholder
-            textView.textColor = Constants.Colors.placeholderColor
-        }
-    }
     
     override init(frame:CGRect) {
         super.init(frame: .zero)
         //        removeCoreData()
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        textViewDidBeginEditing(textView)
-        textViewDidEndEditing(textView)
-        textView.delegate = self
+//        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .none
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         componentArranger()
@@ -133,49 +95,42 @@ class ChatView: UIView, UITextViewDelegate {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        fatalError("")
     }
- 
+    
     private func componentArranger() {
         addSubview(stackView)
-        addSubview(sendButton)
         stackView.addArrangedSubview(tableView)
-        stackView.addArrangedSubview(textView)
+        stackView.addArrangedSubview(typingArea)
+        typingArea.translatesAutoresizingMaskIntoConstraints = false
+        
         setUpConstraints()
     }
     
     //MARK: - Set up stackView and its components contraints
     func setUpConstraints() {
-      
-        
+    
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.leftAnchor.constraint(equalTo: leftAnchor, constant: Constants.StackView.gap),
             stackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -Constants.StackView.gap),
             stackView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor)
         ])
         NSLayoutConstraint.activate([
             //          have to consider one more time
-            tableView.topAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.topAnchor, constant: Constants.TableView.top),
-            tableView.heightAnchor.constraint(equalToConstant: Constants.TableView.height)
+            tableView.topAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: typingArea.topAnchor)
         ])
         NSLayoutConstraint.activate([
-            textView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: Constants.TextViewCon.trailing),
-            textView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: Constants.TextViewCon.trailing),
-            textView.bottomAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.bottomAnchor, constant: Constants.TextViewCon.bottom),
-            textView.heightAnchor.constraint(equalToConstant: Constants.TextViewCon.height)
+            typingArea.bottomAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.bottomAnchor, constant: Constants.TextView.bottom),
         ])
-        NSLayoutConstraint.activate([
-            sendButton.trailingAnchor.constraint(equalTo: textView.trailingAnchor,constant: -Constants.SendButtonCon.trailing),
-            sendButton.topAnchor.constraint(equalTo: textView.topAnchor, constant: Constants.SendButtonCon.top)
-//            sendButton.widthAnchor.constraint(equalToConstant: 32),
-//            sendButton.heightAnchor.constraint(equalToConstant: 32)
-        ])
+          }
+    
     }
     
-}
 
-//MARK: - TableView datasource methods as an extension
+
+//MARK: - UITableViewDataSource
 
 extension ChatView: UITableViewDataSource {
     
@@ -185,8 +140,7 @@ extension ChatView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        tableView.backgroundColor = .clear
-        tableView.separatorStyle = .none
+        
         cell.textLabel?.textColor = Constants.Colors.textColor
         cell.textLabel?.textAlignment = .right
         cell.selectionStyle = .none

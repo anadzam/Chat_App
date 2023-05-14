@@ -9,7 +9,7 @@ import Foundation
 
 
 import UIKit
- 
+
 class RightBubble: UIView {
     
     //    let date = Date()
@@ -33,7 +33,7 @@ class RightBubble: UIView {
         secondBubble.fill()
     }
     
-
-   
+    
+    
 }
 
