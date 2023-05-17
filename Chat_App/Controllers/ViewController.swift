@@ -8,11 +8,12 @@
 import UIKit
 
 
-class ViewController: UIViewController, UITextFieldDelegate {
+class ViewController: UIViewController {
     
-    private lazy var switchButton = SwitchButton()
+    private let switchButton = SwitchButton()
     private lazy var topChatView = ChatView()
     private lazy var bottomChatView = ChatView()
+    private lazy var textView = topChatView.typingArea.textView
     
     //MARK: - Yellow center line
     let centerLine: UIView = {
@@ -25,22 +26,31 @@ class ViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         switchButton.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
+        setUpLayout()
+        constraintsAssigner()
+    }
+    
+    private func setUpLayout() {
+        switchButton.translatesAutoresizingMaskIntoConstraints = false
+        topChatView.translatesAutoresizingMaskIntoConstraints = false
+        bottomChatView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(topChatView)
         view.addSubview(centerLine)
         view.addSubview(switchButton)
         view.addSubview(bottomChatView)
-        switchButton.translatesAutoresizingMaskIntoConstraints = false
-        topChatView.translatesAutoresizingMaskIntoConstraints = false
-        bottomChatView.translatesAutoresizingMaskIntoConstraints = false
-        constraintsAssigner()
-       
     }
     
   
     //MARK: - change background color
     @objc private func didTapButton() {
         view.backgroundColor = switchButton.isOn ? Constants.Colors.darkMode : .white
-       
+//        topChatView.typingArea.textView.textColor = switchButton.isOn ?  Constants.Colors.darkModeTextColor : Constants.Colors.textColor
+//        bottomChatView.typingArea.textView.textColor = switchButton.isOn ?  Constants.Colors.darkModeTextColor : Constants.Colors.textColor
+        
+        let chatViews = [topChatView, bottomChatView]
+        chatViews.forEach { chatView in
+            chatView.typingArea.textView.textColor = switchButton.isOn ? Constants.Colors.darkModeTextColor : Constants.Colors.textColor
+        }
     }
 
     

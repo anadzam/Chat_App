@@ -9,13 +9,17 @@ import Foundation
 import UIKit
 import CoreData
 
-class ChatView: UIView {
+final class ChatView: UIView, UITextViewDelegate {
     let tableView = UITableView()
+    //    let leftBubble = LeftBubble()
+    //    let rightBubble = RightBubble()
+    lazy var sendButton = typingArea.sendButton
     var sentMessages = [Message]()
-    var typingArea = TextView()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var typingArea = TextView()
     
-    
+   
+
     private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -28,45 +32,43 @@ class ChatView: UIView {
     }()
     
     
+//    MARK: - Load messages from coreData
+        func loadMessages(with request: NSFetchRequest<Message> = Message.fetchRequest()) {
+            //        commented since we have that argument inside the function
+            //        let request: NSFetchRequest<Item> = Item.fetchRequest()
+            do {
+                sentMessages = try context.fetch(request)
+            } catch {
+                print("Error fetching data from context \(error)")
+            }
     
-    //MARK: - Load messages from coreData
-    func loadMessages(with request: NSFetchRequest<Message> = Message.fetchRequest()) {
-        //        commented since we have that argument inside the function
-        //        let request: NSFetchRequest<Item> = Item.fetchRequest()
-        do {
-            sentMessages = try context.fetch(request)
-        } catch {
-            print("Error fetching data from context \(error)")
+            tableView.reloadData()
+    
         }
-        
-        tableView.reloadData()
-        
-    }
     //in progress
-    //    @objc private func sendMessage(sender: UIButton) {
-    //        //        let messageText = textView.text ?? ""
-    //        //        sentMessages.append(messageText)
-    //        let newText = Message(context: self.context)
-    //        newText.text = textView.text!
-    //        self.sentMessages.append(newText)
-    //        textView.text = ""
-    //        saveItems()
-    //        print("message sent")
-    //    }
+    @objc private func sendMessage(sender: UIButton) {
+        //        let messageText = textView.text ?? ""
+        //        sentMessages.append(messageText)
+        let newText = Message(context: self.context)
+        newText.text = typingArea.textView.text!
+        self.sentMessages.append(newText)
+        typingArea.textView.text = ""
+        saveItems()
+        print("message sent")
+    }
     //
-    //MARK: - To remove entity data
-    //need for testing
-    //    func removeCoreData() {
-    //
-    //        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Message")
-    //        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-    //
-    //        do {
-    //            try context.execute(deleteRequest)
-    //        } catch let error as NSError {
-    //            print(error.localizedDescription)
-    //        }
-    //    }
+//    MARK: - To remove entity data need for testing
+        func removeCoreData() {
+    
+            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Message")
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+    
+            do {
+                try context.execute(deleteRequest)
+            } catch let error as NSError {
+                print(error.localizedDescription)
+            }
+        }
     
     //MARK: - TableView Data Manipulation method
     func saveItems() {
@@ -83,19 +85,22 @@ class ChatView: UIView {
     
     override init(frame:CGRect) {
         super.init(frame: .zero)
-        //        removeCoreData()
-//        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+//                removeCoreData()
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(TableViewCell.self, forCellReuseIdentifier: Constants.TableView.cellReuseIdentifier)
         componentArranger()
+        sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         loadMessages()
     }
     
+    
+    
     required init?(coder aDecoder: NSCoder) {
-        fatalError("")
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func componentArranger() {
@@ -109,7 +114,7 @@ class ChatView: UIView {
     
     //MARK: - Set up stackView and its components contraints
     func setUpConstraints() {
-    
+        
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.leftAnchor.constraint(equalTo: leftAnchor, constant: Constants.StackView.gap),
@@ -124,13 +129,12 @@ class ChatView: UIView {
         NSLayoutConstraint.activate([
             typingArea.bottomAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.bottomAnchor, constant: Constants.TextView.bottom),
         ])
-          }
-    
     }
     
+}
 
 
-//MARK: - UITableViewDataSource
+//MARK: - TableView datasource methods as an extension
 
 extension ChatView: UITableViewDataSource {
     
@@ -139,14 +143,11 @@ extension ChatView: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        
-        cell.textLabel?.textColor = Constants.Colors.textColor
-        cell.textLabel?.textAlignment = .right
-        cell.selectionStyle = .none
-        cell.backgroundColor = .clear
+        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TableView.cellReuseIdentifier, for: indexPath) as! TableViewCell
         let message = sentMessages[indexPath.row]
-        cell.textLabel?.text = message.text
+        cell.configure(with: message.text ?? "")
+        //        cell.label.text = sentMessages[indexPath.row]
+        
         return cell
     }
     

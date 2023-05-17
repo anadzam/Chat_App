@@ -12,7 +12,7 @@ class SwitchButton: UIButton {
     
     var isOn: Bool = false {
         didSet {
-            self.update()
+            update()
         }
     }
     
@@ -31,7 +31,7 @@ class SwitchButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
-     func update() {
+    private func update() {
         UIView.transition(with: self, duration: 0.10, options: .transitionCrossDissolve, animations: {
             self.isOn ? self.setImage(IsOnMode.onImage, for: .normal) : self.setImage(IsOnMode.offImage, for: .normal)
         }, completion: nil)
@@ -50,7 +50,7 @@ class SwitchButton: UIButton {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
         self.sendHapticFeedback()
-        self.toggle()
+        isOn.toggle()
     }
     
     func sendHapticFeedback() {

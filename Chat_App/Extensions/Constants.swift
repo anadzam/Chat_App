@@ -13,14 +13,17 @@ enum Constants {
     enum TextView {
         static let trailing: CGFloat = 2
         static let height: CGFloat = 50
-        static let bottom: CGFloat = 100
         static let borderWidth: CGFloat = 1.0
         static let cornerRadius: CGFloat = 23
         static let font: UIFont = .systemFont(ofSize: 16)
         static let placeholder: String = "დაწერეთ შეტყობინება"
         static let topEdge: CGFloat = 15
         static let leftEdge: CGFloat = 10
+        static let top: CGFloat = 2
+        static let bottom: CGFloat = 2
+        static let maxNumberOfLines: CGFloat = 6
     }
+  
     
     enum SendButton {
         static let trailing: CGFloat = 16
@@ -42,7 +45,6 @@ enum Constants {
         case lightMode
         case darkMode
         case sendButton
-        case centerLine = "rectangle"
         
     }
     
@@ -76,6 +78,7 @@ enum Constants {
         static let bubbleColor = UIColor(r: 218, g: 194, b: 255)
         static let textColor = UIColor(r: 25, g: 25, b: 25)
         static let centreLineColor = UIColor(r: 247, g: 206, b: 127)
+        static let darkModeTextColor = UIColor(r: 241, g: 241, b: 241)
     }
     
 }
