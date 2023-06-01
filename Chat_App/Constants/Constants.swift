@@ -5,6 +5,7 @@
 //  Created by Ana Dzamelashvili on 5/4/23.
 //
 
+
 import Foundation
 import UIKit
 
@@ -23,7 +24,10 @@ enum Constants {
         static let bottom: CGFloat = 2
         static let maxNumberOfLines: CGFloat = 6
     }
-  
+    
+    enum Label {
+        static let errorLabel: String = "არ გაიგზავნა"
+    }
     
     enum SendButton {
         static let trailing: CGFloat = 16
@@ -38,7 +42,8 @@ enum Constants {
     enum TableView {
         static let top: CGFloat = 50
         static let height: CGFloat = 300
-        static let cellReuseIdentifier = "Cell"
+        static let RecieverCellReuseIdentifier = "RecieverCell"
+        static let SenderCellReuseIdentifier = "SenderCell"
     }
     
     enum AssetIdentifier: String {
@@ -72,13 +77,13 @@ enum Constants {
     }
     
     enum Colors {
-        static let placeholderColor = UIColor(r: 199.0, g: 199.0, b: 199.0)
-        static let borderColor = UIColor(r: 159.0, g: 96.0, b: 225.0).cgColor
-        static let darkMode = UIColor(r: 22, g: 0, b: 57)
-        static let bubbleColor = UIColor(r: 218, g: 194, b: 255)
-        static let textColor = UIColor(r: 25, g: 25, b: 25)
-        static let centreLineColor = UIColor(r: 247, g: 206, b: 127)
-        static let darkModeTextColor = UIColor(r: 241, g: 241, b: 241)
+        static let placeholderColor = UIColor(hex: 0xC7C7C70)
+        static let borderColor = UIColor(hex: 0x9F60FF).cgColor
+        static let darkMode = UIColor(hex: 0x160039)
+        static let bubbleColor = UIColor(hex: 0xDAC2FF)
+        static let textColor = UIColor(hex: 0x191919)
+        static let centreLineColor = UIColor(hex: 0xF7CE7F)
+        static let darkModeTextColor = UIColor(hex: 0xF1F1F1)
     }
     
 }

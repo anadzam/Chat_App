@@ -8,18 +8,25 @@
 import Foundation
 import UIKit
 
+protocol ButtonActionDelegate: AnyObject {
+    func buttonTapped(sender: UIButton)
+}
+protocol TextViewDelegate: AnyObject {
+    func changeTextColor(color: UIColor)
+}
 
 class TextView: UIView {
-  
+    
     private let lineHeight: CGFloat = Constants.TextView.font.lineHeight
-    public lazy var sendButton = UIButton()
+    private lazy var sendButton = UIButton()
     private lazy var containerView = UIView()
     public lazy var textView = UITextView()
+    weak var delegate: ButtonActionDelegate?
+    weak var textViewDelegate: TextViewDelegate?
     
     override init(frame:CGRect) {
         super.init(frame: .zero)
         setUpLayout()
-        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -37,9 +44,12 @@ class TextView: UIView {
         setUpContainerView()
     }
     
-    public func setUpTextView() {
+    func changeColor(_ color: UIColor) {
+        textView.textColor = color
+    }
+    
+    private func setUpTextView() {
         textView.translatesAutoresizingMaskIntoConstraints = false
-//        textView.textColor = Constants.Colors.textColor
         textView.font = Constants.TextView.font
         textView.autocorrectionType = .no
         textView.delegate = self
@@ -55,7 +65,7 @@ class TextView: UIView {
     }
     
     
-    public func setUpContainerView() {
+    private func setUpContainerView() {
         containerView.layer.borderWidth = Constants.ContainerView.borderWidth
         containerView.layer.borderColor = Constants.Colors.borderColor
         containerView.layer.cornerRadius = Constants.ContainerView.cornerRadius
@@ -63,12 +73,16 @@ class TextView: UIView {
         
     }
     
-    public func setUpButton() {
+    private func setUpButton() {
         sendButton.setImage(UIImage(named: Constants.AssetIdentifier.sendButton.rawValue), for: .normal)
-        //        sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
+        sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         sendButton.translatesAutoresizingMaskIntoConstraints = false
+        
     }
     
+    @objc func sendMessage() {
+        delegate?.buttonTapped(sender: sendButton)
+    }
     //MARK: - Constraints
     func setUpConstraints() {
         
@@ -94,7 +108,7 @@ class TextView: UIView {
         
     }
 }
-//MARK: - TextView delegate methods
+//MARK: - UITextViewDelegate
 extension TextView: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         guard textView.textColor == Constants.Colors.placeholderColor else {return}

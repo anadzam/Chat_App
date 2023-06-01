@@ -36,10 +36,9 @@ class SwitchButton: UIButton {
             self.isOn ? self.setImage(IsOnMode.onImage, for: .normal) : self.setImage(IsOnMode.offImage, for: .normal)
         }, completion: nil)
         
-        
     }
     private func toggle() {
-        self.isOn ? self.setStatus(false) : self.setStatus(true)
+        self.setStatus(!isOn)
     }
     
     func setStatus(_ status: Bool) {
@@ -49,16 +48,8 @@ class SwitchButton: UIButton {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
-        self.sendHapticFeedback()
         isOn.toggle()
     }
-    
-    func sendHapticFeedback() {
-        let impactFeedbackgenerator = UIImpactFeedbackGenerator(style: .heavy)
-        impactFeedbackgenerator.prepare()
-        impactFeedbackgenerator.impactOccurred()
-    }
-    
-    
+
     
 }

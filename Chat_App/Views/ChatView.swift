@@ -5,21 +5,18 @@
 //  Created by Ana Dzamelashvili on 4/19/23.
 //
 
-import Foundation
 import UIKit
-import CoreData
 
-final class ChatView: UIView, UITextViewDelegate {
-    let tableView = UITableView()
-    //    let leftBubble = LeftBubble()
-    //    let rightBubble = RightBubble()
-    lazy var sendButton = typingArea.sendButton
-    var sentMessages = [Message]()
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    var typingArea = TextView()
+protocol SendMessageDelegate: AnyObject {
+    func sendButton(sender: UIButton)
+}
+ class ChatView: UIView {
     
-   
-
+    let tableView = UITableView()
+    var typingArea = TextView()
+    var viewModel = ChatViewModel()
+    weak var sendMessageDelegate: SendMessageDelegate?
+    
     private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -27,94 +24,40 @@ final class ChatView: UIView, UITextViewDelegate {
         stackView.spacing = Constants.StackView.spacing
         stackView.backgroundColor = .clear
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        
         return stackView
     }()
     
     
-//    MARK: - Load messages from coreData
-        func loadMessages(with request: NSFetchRequest<Message> = Message.fetchRequest()) {
-            //        commented since we have that argument inside the function
-            //        let request: NSFetchRequest<Item> = Item.fetchRequest()
-            do {
-                sentMessages = try context.fetch(request)
-            } catch {
-                print("Error fetching data from context \(error)")
-            }
-    
-            tableView.reloadData()
-    
-        }
-    //in progress
-    @objc private func sendMessage(sender: UIButton) {
-        //        let messageText = textView.text ?? ""
-        //        sentMessages.append(messageText)
-        let newText = Message(context: self.context)
-        newText.text = typingArea.textView.text!
-        self.sentMessages.append(newText)
-        typingArea.textView.text = ""
-        saveItems()
-        print("message sent")
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setUpStackView()
+        setUpConstraints()
+        configureTableView()
     }
-    //
-//    MARK: - To remove entity data need for testing
-        func removeCoreData() {
-    
-            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Message")
-            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-    
-            do {
-                try context.execute(deleteRequest)
-            } catch let error as NSError {
-                print(error.localizedDescription)
-            }
-        }
-    
-    //MARK: - TableView Data Manipulation method
-    func saveItems() {
-        do {
-            try context.save()
-            
-        } catch {
-            print("Error saving context \(error)")
-            
-        }
-        tableView.reloadData()
-    }
-    
-    
-    override init(frame:CGRect) {
-        super.init(frame: .zero)
-//                removeCoreData()
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.backgroundColor = .clear
-        tableView.separatorStyle = .none
-        tableView.dataSource = self
-        tableView.register(TableViewCell.self, forCellReuseIdentifier: Constants.TableView.cellReuseIdentifier)
-        componentArranger()
-        sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
-        loadMessages()
-    }
-    
-    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func componentArranger() {
+    func configureTableView() {
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .none
+        tableView.dataSource = self
+        tableView.register(ReceiverCell.self, forCellReuseIdentifier: Constants.TableView.RecieverCellReuseIdentifier)
+        tableView.register(SenderCell.self, forCellReuseIdentifier: Constants.TableView.SenderCellReuseIdentifier)
+        tableView.showsVerticalScrollIndicator = false
+    }
+    
+    private func setUpStackView() {
         addSubview(stackView)
         stackView.addArrangedSubview(tableView)
         stackView.addArrangedSubview(typingArea)
         typingArea.translatesAutoresizingMaskIntoConstraints = false
-        
-        setUpConstraints()
+        typingArea.delegate = self
     }
     
-    //MARK: - Set up stackView and its components contraints
     func setUpConstraints() {
-        
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.leftAnchor.constraint(equalTo: leftAnchor, constant: Constants.StackView.gap),
@@ -122,7 +65,6 @@ final class ChatView: UIView, UITextViewDelegate {
             stackView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor)
         ])
         NSLayoutConstraint.activate([
-            //          have to consider one more time
             tableView.topAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: typingArea.topAnchor)
         ])
@@ -130,26 +72,39 @@ final class ChatView: UIView, UITextViewDelegate {
             typingArea.bottomAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.bottomAnchor, constant: Constants.TextView.bottom),
         ])
     }
-    
 }
 
-
-//MARK: - TableView datasource methods as an extension
-
+//MARK: - UITableViewDataSource
 extension ChatView: UITableViewDataSource {
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        sentMessages.count
+        return viewModel.numberOfMessages()
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TableView.cellReuseIdentifier, for: indexPath) as! TableViewCell
-        let message = sentMessages[indexPath.row]
-        cell.configure(with: message.text ?? "")
-        //        cell.label.text = sentMessages[indexPath.row]
+        let message = viewModel.message(at: indexPath.row)
         
-        return cell
+        if message.userId == 1 {
+            let sender = tableView.dequeueReusableCell(withIdentifier: Constants.TableView.SenderCellReuseIdentifier, for: indexPath) as! SenderCell
+            sender.configure(with: message)
+            return sender
+        } else if message.userId == 2 {
+            let receiver = tableView.dequeueReusableCell(withIdentifier: Constants.TableView.RecieverCellReuseIdentifier, for: indexPath) as! ReceiverCell
+            receiver.configure(with: message)
+            return receiver
+        }
+        return UITableViewCell()
     }
     
+}
+
+//MARK: - ButtonActionDelegate
+extension ChatView: ButtonActionDelegate {
+    func buttonTapped(sender: UIButton) {
+        sendMessageDelegate?.sendButton(sender: sender)
+    }
     
+    func changeTextColor(color: UIColor) {
+        typingArea.changeColor(color)
+    }
 }
