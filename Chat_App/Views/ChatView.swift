@@ -7,15 +7,22 @@
 
 import UIKit
 
+protocol ChatViewDelegate: AnyObject {
+    func chatView(_ chatView: ChatView, didSendMessageWithText text: String, userId: Int)
+}
+
 protocol SendMessageDelegate: AnyObject {
     func sendButton(sender: UIButton)
 }
- class ChatView: UIView {
+
+class ChatView: UIView {
     
     let tableView = UITableView()
     var typingArea = TextView()
     var viewModel = ChatViewModel()
     weak var sendMessageDelegate: SendMessageDelegate?
+    var currentUser = 1
+  
     
     private let stackView: UIStackView = {
         let stackView = UIStackView()
@@ -83,19 +90,17 @@ extension ChatView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = viewModel.message(at: indexPath.row)
-        
-        if message.userId == 1 {
+
+        if message.userId == currentUser {
             let sender = tableView.dequeueReusableCell(withIdentifier: Constants.TableView.SenderCellReuseIdentifier, for: indexPath) as! SenderCell
             sender.configure(with: message)
             return sender
-        } else if message.userId == 2 {
+        } else {
             let receiver = tableView.dequeueReusableCell(withIdentifier: Constants.TableView.RecieverCellReuseIdentifier, for: indexPath) as! ReceiverCell
             receiver.configure(with: message)
             return receiver
         }
-        return UITableViewCell()
     }
-    
 }
 
 //MARK: - ButtonActionDelegate
@@ -104,7 +109,9 @@ extension ChatView: ButtonActionDelegate {
         sendMessageDelegate?.sendButton(sender: sender)
     }
     
+    
     func changeTextColor(color: UIColor) {
         typingArea.changeColor(color)
     }
 }
+

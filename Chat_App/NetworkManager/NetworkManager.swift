@@ -18,7 +18,7 @@ final class NetworkManager {
     public private(set) var isConnected: Bool = true
     
     private init() {
-      monitor = NWPathMonitor()
+        monitor = NWPathMonitor()
     }
     
     public func startMonitoring() {
@@ -28,7 +28,7 @@ final class NetworkManager {
             self.isConnected = path.status == .satisfied
             print(self.isConnected)
         }
-
+        
     }
     
 }

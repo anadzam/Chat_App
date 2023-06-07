@@ -10,9 +10,8 @@ import UIKit
 
 class ReceiverCell: UITableViewCell {
     
-    private let label: UILabel = {
+     let label: UILabel = {
         let label = UILabel()
-        label.textColor = Constant.textColor
         label.numberOfLines = .zero
         label.font = Constants.TextView.font
         return label
@@ -28,21 +27,21 @@ class ReceiverCell: UITableViewCell {
     private let bigBubble: UIView = {
         let bubble = UIView()
         bubble.layer.cornerRadius = Bubble.radius
-        bubble.backgroundColor = Constants.Colors.bubbleColor
+        bubble.backgroundColor = Constant.bubbleColor
         return bubble
     }()
     
     private let mediumBubble: UIView = {
         let bubble = UIView()
         bubble.layer.cornerRadius = MiddleBubble.radius
-        bubble.backgroundColor = Constants.Colors.bubbleColor
+        bubble.backgroundColor = Constant.bubbleColor
         return bubble
     }()
     
     private let smallBubble: UIView = {
         let bubble = UIView()
         bubble.layer.cornerRadius = SmallBubble.radius
-        bubble.backgroundColor = Constants.Colors.bubbleColor
+        bubble.backgroundColor = Constant.bubbleColor
         return bubble
     }()
     
@@ -84,7 +83,8 @@ class ReceiverCell: UITableViewCell {
     func configure(with message: MessageEntity) {
         label.text = message.text
         dateLabel.text = message.date
-        
+        label.textColor = message.failedToSend ? Constant.failedTextColor : Constant.textColor
+        dateLabel.textColor = message.failedToSend ? .red : Constants.Colors.placeholderColor
     }
     
     private func setUpLayoutConstraints() {

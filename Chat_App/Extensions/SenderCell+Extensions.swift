@@ -13,8 +13,9 @@ extension SenderCell {
     enum Constant {
         static let labelFont: UIFont = .systemFont(ofSize: 8)
         static let placeholderColor = UIColor(hex: 0xC7C7C7)
-        static let bubbleColor = UIColor(hex: 0xF1F1F1)
+        static let bubbleColor = UIColor(hex: 0xDAC2FF)
         static let textColor = UIColor(hex: 0x191919)
+        static let failedTextColor = UIColor(hex: 0x676767)
     }
     enum Bubble {
         static let radius: CGFloat = 25

@@ -20,9 +20,22 @@ class TextView: UIView {
     private let lineHeight: CGFloat = Constants.TextView.font.lineHeight
     private lazy var sendButton = UIButton()
     private lazy var containerView = UIView()
-    public lazy var textView = UITextView()
+    lazy var textView = UITextView()
     weak var delegate: ButtonActionDelegate?
     weak var textViewDelegate: TextViewDelegate?
+    
+    
+    private let placeholder: UILabel = {
+        let placeholder = UILabel()
+        placeholder.text = "დაწერე შეტყობინება..."
+        placeholder.font = Constants.TextView.font
+        placeholder.sizeToFit()
+        
+        placeholder.textColor = Constants.Colors.placeholderColor
+        
+        placeholder.translatesAutoresizingMaskIntoConstraints = false
+        return placeholder
+    }()
     
     override init(frame:CGRect) {
         super.init(frame: .zero)
@@ -30,7 +43,6 @@ class TextView: UIView {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        //fatal error message
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -38,6 +50,7 @@ class TextView: UIView {
         addSubview(containerView)
         containerView.addSubview(textView)
         containerView.addSubview(sendButton)
+        textView.addSubview(placeholder)
         setUpConstraints()
         setUpButton()
         setUpTextView()
@@ -55,8 +68,7 @@ class TextView: UIView {
         textView.delegate = self
         textView.clipsToBounds = true
         textView.backgroundColor = .clear
-        textView.text = Constants.TextView.placeholder
-        textView.textColor = Constants.Colors.placeholderColor
+        textView.textColor = Constants.Colors.textColor
         textView.textContainerInset = UIEdgeInsets(top: Constants.TextView.topEdge,
                                                    left: Constants.TextView.leftEdge,
                                                    bottom:  Constants.TextView.topEdge,
@@ -102,6 +114,10 @@ class TextView: UIView {
             
         ])
         NSLayoutConstraint.activate([
+            placeholder.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            placeholder.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Constants.TextView.leftEdge)
+        ])
+        NSLayoutConstraint.activate([
             sendButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -Constants.SendButton.bottom),
             sendButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Constants.SendButton.trailing)
         ])
@@ -111,16 +127,12 @@ class TextView: UIView {
 //MARK: - UITextViewDelegate
 extension TextView: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
-        guard textView.textColor == Constants.Colors.placeholderColor else {return}
-        textView.text = ""
-        textView.textColor = Constants.Colors.textColor
+        placeholder.isHidden = true
     }
-    
     
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
-            textView.text = Constants.TextView.placeholder
-            textView.textColor = Constants.Colors.placeholderColor
+            placeholder.isHidden = false
         }
     }
     func textViewDidChange(_ textView: UITextView) {
@@ -133,6 +145,7 @@ extension TextView: UITextViewDelegate {
                 constraint.constant = newHeight
             }
         }
+        
         containerView.constraints.forEach { constraint in
             if constraint.firstAttribute == .height {
                 constraint.constant = newHeight

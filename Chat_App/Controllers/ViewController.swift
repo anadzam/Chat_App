@@ -7,8 +7,8 @@
 
 import UIKit
 
-class ViewController: UIViewController, SendMessageDelegate {
-  
+final class ViewController: UIViewController, SendMessageDelegate {
+    
     
     //MARK: - Properties
     private let switchButton = SwitchButton()
@@ -18,6 +18,10 @@ class ViewController: UIViewController, SendMessageDelegate {
     private let textView = TextView()
     private lazy var currentDate = Date()
     private lazy var formattedDate = DateFormatter.formatCustomDate(currentDate)
+    lazy var topTextView = topChatView.typingArea.textView
+    lazy var bottomTextView = bottomChatView.typingArea.textView
+    let userDefaults = UserDefaults.standard
+    
     
     let centerLine: UIView = {
         let line = UIView()
@@ -29,17 +33,26 @@ class ViewController: UIViewController, SendMessageDelegate {
     //MARK: - Override
     override func viewDidLoad() {
         super.viewDidLoad()
-        switchButton.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
+        switchButton.addTarget(self, action: #selector(switchButtonTapped), for: .touchUpInside)
         setUpLayout()
         constraintsAssigner()
         viewModel.delegate = self
         viewModel.loadMessages()
-        scrollToBottom()
-//        viewModel.removeMessages()
+        //                        viewModel.removeMessages()
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         topChatView.sendMessageDelegate = self
         bottomChatView.sendMessageDelegate = self
-      
+        topChatView.currentUser = 1
+        bottomChatView.currentUser = 2
+        
+        checkSwithcState()
+        
+    }
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        scrollToBottom()
     }
     
     //MARK: - Functions
@@ -56,42 +69,52 @@ class ViewController: UIViewController, SendMessageDelegate {
         view.addSubview(bottomChatView)
     }
     
-    
     //MARK: - Change background color
-    @objc private func didTapButton() {
+    @objc private func switchButtonTapped() {
         view.backgroundColor = switchButton.isOn ? Constants.Colors.darkMode : .white
+        
         let chatViews = [topChatView, bottomChatView]
         chatViews.forEach { chatView in
             chatView.changeTextColor(color: switchButton.isOn ? Constants.Colors.darkModeTextColor : Constants.Colors.textColor)
         }
         
+        if switchButton.isOn {
+            userDefaults.set(true, forKey: "isOn")
+            
+        }else {
+            userDefaults.set(false, forKey: "isOn")
+        }
     }
     
-
-    func sendButton(sender: UIButton) {
-        let firstTextField = topChatView.typingArea.textView
-        let secondTextField = bottomChatView.typingArea.textView
-
-        if firstTextField.isFirstResponder {
-            guard let text = firstTextField.text else { return }
     
+    func sendButton(sender: UIButton) {
+        if topTextView.isFirstResponder {
+            guard let text = topTextView.text else { return }
             viewModel.sendMessages(with: text, userId: 1, date: formattedDate, failedToSend: !NetworkManager.shared.isConnected)
-            firstTextField.text = ""
-
-            
-        } else if secondTextField.isFirstResponder {
-            guard let text = secondTextField.text else { return }
+            topTextView.text = ""
+        } else if bottomTextView.isFirstResponder {
+            guard let text = bottomTextView.text else { return }
             viewModel.sendMessages(with: text, userId: 2, date: formattedDate, failedToSend: !NetworkManager.shared.isConnected)
-            secondTextField.text = ""
+            bottomTextView.text = ""
+        }
+    }
+    
+    func checkSwithcState() {
+        if userDefaults.bool(forKey: "isOn") {
+            switchButton.isOn = false
+            view.backgroundColor = Constants.Colors.darkMode
+        } else {
+            switchButton.isOn = true
+            view.backgroundColor = .white
         }
     }
     
     func scrollToBottom() {
         guard viewModel.numberOfMessages() > 1 else { return }
-            let indexPath = IndexPath(item: viewModel.numberOfMessages()-1, section: 0)
-            topChatView.tableView.scrollToRow(at: indexPath, at: UITableView.ScrollPosition.bottom, animated: true)
-            bottomChatView.tableView.scrollToRow(at: indexPath, at: UITableView.ScrollPosition.bottom, animated: true)
-        }
+        let indexPath = IndexPath(item: viewModel.numberOfMessages()-1, section: 0)
+        topChatView.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        bottomChatView.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+    }
     
     
     //MARK: - Set up constraints
@@ -140,6 +163,7 @@ extension ViewController: ChatViewModelDelegate {
         topChatView.tableView.reloadData()
         bottomChatView.tableView.reloadData()
         scrollToBottom()
-       
+        
     }
 }
+

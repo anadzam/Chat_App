@@ -12,7 +12,7 @@ class SenderCell: UITableViewCell {
     
     private let label: UILabel = {
         let label = UILabel()
-        label.textColor = Constant.textColor
+//        label.textColor = Constant.textColor
         label.numberOfLines = .zero
         label.font = Constants.TextView.font
         return label
@@ -84,9 +84,9 @@ class SenderCell: UITableViewCell {
     func configure(with message: MessageEntity) {
         label.text = message.text
         dateLabel.text = message.date
-        
+        label.textColor = message.failedToSend ? Constant.failedTextColor : Constant.textColor
         dateLabel.textColor = message.failedToSend ? .red : Constants.Colors.placeholderColor
-    
+        
     }
     
     private func setUpLayoutConstraints() {

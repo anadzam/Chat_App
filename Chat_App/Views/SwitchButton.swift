@@ -19,12 +19,13 @@ class SwitchButton: UIButton {
     enum IsOnMode {
         static let onImage = UIImage(assetIdentifier: .lightMode)
         static let offImage = UIImage(assetIdentifier: .darkMode)
+        
     }
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.setStatus(true)
+        setImage(IsOnMode.onImage, for: .normal)
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -35,21 +36,17 @@ class SwitchButton: UIButton {
         UIView.transition(with: self, duration: 0.10, options: .transitionCrossDissolve, animations: {
             self.isOn ? self.setImage(IsOnMode.onImage, for: .normal) : self.setImage(IsOnMode.offImage, for: .normal)
         }, completion: nil)
+        print(self.isOn)
         
     }
     private func toggle() {
-        self.setStatus(!isOn)
-    }
-    
-    func setStatus(_ status: Bool) {
-        self.isOn = status
-        
+        isOn.toggle()
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
-        isOn.toggle()
+        toggle()
     }
-
+    
     
 }
