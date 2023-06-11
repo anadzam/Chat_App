@@ -21,8 +21,11 @@ class ChatView: UIView {
     var typingArea = TextView()
     var viewModel = ChatViewModel()
     weak var sendMessageDelegate: SendMessageDelegate?
-    var currentUser = 1
-  
+    var currentUser = 1 {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     
     private let stackView: UIStackView = {
         let stackView = UIStackView()
@@ -84,13 +87,13 @@ class ChatView: UIView {
 //MARK: - UITableViewDataSource
 extension ChatView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.numberOfMessages()
+        viewModel.numberOfMessages()
         
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = viewModel.message(at: indexPath.row)
-
+        
         if message.userId == currentUser {
             let sender = tableView.dequeueReusableCell(withIdentifier: Constants.TableView.SenderCellReuseIdentifier, for: indexPath) as! SenderCell
             sender.configure(with: message)

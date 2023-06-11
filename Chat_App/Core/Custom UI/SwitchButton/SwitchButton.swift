@@ -25,7 +25,6 @@ class SwitchButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setImage(IsOnMode.onImage, for: .normal)
-        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -36,9 +35,8 @@ class SwitchButton: UIButton {
         UIView.transition(with: self, duration: 0.10, options: .transitionCrossDissolve, animations: {
             self.isOn ? self.setImage(IsOnMode.onImage, for: .normal) : self.setImage(IsOnMode.offImage, for: .normal)
         }, completion: nil)
-        print(self.isOn)
-        
     }
+    
     private func toggle() {
         isOn.toggle()
     }

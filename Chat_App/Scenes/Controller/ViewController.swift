@@ -8,6 +8,7 @@
 import UIKit
 
 final class ViewController: UIViewController, SendMessageDelegate {
+   
     
     
     //MARK: - Properties
@@ -18,8 +19,8 @@ final class ViewController: UIViewController, SendMessageDelegate {
     private let textView = TextView()
     private lazy var currentDate = Date()
     private lazy var formattedDate = DateFormatter.formatCustomDate(currentDate)
-    lazy var topTextView = topChatView.typingArea.textView
-    lazy var bottomTextView = bottomChatView.typingArea.textView
+    lazy var topTextView = topChatView.typingArea
+    lazy var bottomTextView = bottomChatView.typingArea
     let userDefaults = UserDefaults.standard
     
     
@@ -36,19 +37,16 @@ final class ViewController: UIViewController, SendMessageDelegate {
         switchButton.addTarget(self, action: #selector(switchButtonTapped), for: .touchUpInside)
         setUpLayout()
         constraintsAssigner()
-        viewModel.delegate = self
         viewModel.loadMessages()
-        //                        viewModel.removeMessages()
+//        viewModel.removeMessages()
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        topChatView.sendMessageDelegate = self
-        bottomChatView.sendMessageDelegate = self
         topChatView.currentUser = 1
         bottomChatView.currentUser = 2
-        
         checkSwithcState()
+        addDelegates()
+        hideKeyboard()
         
     }
-    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -69,6 +67,13 @@ final class ViewController: UIViewController, SendMessageDelegate {
         view.addSubview(bottomChatView)
     }
     
+    private func addDelegates() {
+        topChatView.sendMessageDelegate = self
+        bottomChatView.sendMessageDelegate = self
+        viewModel.delegate = self
+    }
+    
+    
     //MARK: - Change background color
     @objc private func switchButtonTapped() {
         view.backgroundColor = switchButton.isOn ? Constants.Colors.darkMode : .white
@@ -85,19 +90,29 @@ final class ViewController: UIViewController, SendMessageDelegate {
             userDefaults.set(false, forKey: "isOn")
         }
     }
-    
-    
+
     func sendButton(sender: UIButton) {
-        if topTextView.isFirstResponder {
-            guard let text = topTextView.text else { return }
+        if sender === topTextView.getSendButton() {
+            guard let text = topTextView.textView.text else { return }
             viewModel.sendMessages(with: text, userId: 1, date: formattedDate, failedToSend: !NetworkManager.shared.isConnected)
-            topTextView.text = ""
-        } else if bottomTextView.isFirstResponder {
-            guard let text = bottomTextView.text else { return }
+            topTextView.textView.text = ""
+        } else if sender === bottomTextView.getSendButton() {
+            guard let text = bottomTextView.textView.text else { return }
             viewModel.sendMessages(with: text, userId: 2, date: formattedDate, failedToSend: !NetworkManager.shared.isConnected)
-            bottomTextView.text = ""
+            bottomTextView.textView.text = ""
         }
     }
+    
+  
+    func hideKeyboard() {
+          let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+          tap.cancelsTouchesInView = false
+          view.addGestureRecognizer(tap)
+      }
+
+      @objc func dismissKeyboard() {
+          view.endEditing(true)
+      }
     
     func checkSwithcState() {
         if userDefaults.bool(forKey: "isOn") {

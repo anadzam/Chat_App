@@ -16,8 +16,8 @@ class ChatViewModel {
     weak var delegate: ChatViewModelDelegate?
     private let coreDataManager = CoreDataManager()
     private var sentMessages = [MessageEntity]()
-   
-     
+    
+    
     //MARK: - Load messages from coreData
     func loadMessages() {
         if let messages = coreDataManager.loadObjects(with: coreDataManager.request) {

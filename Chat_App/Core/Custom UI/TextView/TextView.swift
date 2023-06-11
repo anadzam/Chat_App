@@ -46,6 +46,9 @@ class TextView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func getSendButton() -> UIButton {
+           return sendButton
+       }
     private func setUpLayout() {
         addSubview(containerView)
         containerView.addSubview(textView)
@@ -60,6 +63,7 @@ class TextView: UIView {
     func changeColor(_ color: UIColor) {
         textView.textColor = color
     }
+   
     
     private func setUpTextView() {
         textView.translatesAutoresizingMaskIntoConstraints = false
