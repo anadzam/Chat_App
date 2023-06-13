@@ -122,7 +122,7 @@ class TextView: UIView {
             placeholder.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Constants.TextView.leftEdge)
         ])
         NSLayoutConstraint.activate([
-            sendButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -Constants.SendButton.bottom),
+            sendButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             sendButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Constants.SendButton.trailing)
         ])
         

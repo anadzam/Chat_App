@@ -87,6 +87,9 @@ class SenderCell: UITableViewCell {
         label.textColor = message.failedToSend ? Constant.failedTextColor : Constant.textColor
         dateLabel.textColor = message.failedToSend ? .red : Constants.Colors.placeholderColor
         
+    
+       
+        
     }
     
     private func setUpLayoutConstraints() {

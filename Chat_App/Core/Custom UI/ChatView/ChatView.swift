@@ -85,14 +85,22 @@ class ChatView: UIView {
 }
 
 //MARK: - UITableViewDataSource
-extension ChatView: UITableViewDataSource {
+extension ChatView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.numberOfMessages()
-        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = viewModel.message(at: indexPath.row)
+        let emptyCell  = UITableViewCell()
+        emptyCell.contentView.isHidden = true
+        emptyCell.isUserInteractionEnabled = false
+        emptyCell.selectionStyle = .none
+        emptyCell.frame.size.height = 0
+        
+        if message.failedToSend && message.userId != currentUser {
+            return emptyCell
+        }
         
         if message.userId == currentUser {
             let sender = tableView.dequeueReusableCell(withIdentifier: Constants.TableView.SenderCellReuseIdentifier, for: indexPath) as! SenderCell
@@ -104,7 +112,9 @@ extension ChatView: UITableViewDataSource {
             return receiver
         }
     }
+
 }
+
 
 //MARK: - ButtonActionDelegate
 extension ChatView: ButtonActionDelegate {
