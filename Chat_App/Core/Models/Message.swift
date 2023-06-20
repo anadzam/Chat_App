@@ -8,8 +8,8 @@
 import Foundation
 
 struct Message {
-    let userId: Int32
     let text: String
+    let userId: Int32
     let date: String
     let failedToSend: Bool
 }

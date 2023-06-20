@@ -15,8 +15,20 @@ protocol ChatViewModelDelegate: AnyObject {
 class ChatViewModel {
     weak var delegate: ChatViewModelDelegate?
     private let coreDataManager = CoreDataManager()
-    private var sentMessages = [MessageEntity]()
+    private lazy var sentMessages = [MessageEntity]()
+  
     
+    func filteredMessages(currentUser: Int) -> [MessageEntity] {
+        var filtered = [MessageEntity]()
+        
+        sentMessages.forEach { message in
+            if message.userId == currentUser || !message.failedToSend {
+                filtered.append(message)
+            }
+        }
+        return filtered
+    }
+
     
     //MARK: - Load messages from coreData
     func loadMessages() {
@@ -29,14 +41,14 @@ class ChatViewModel {
     }
     
     //MARK: - Create new Message
-    func sendMessages(with text: String, userId: Int32, date: String, failedToSend: Bool) {
+    func sendMessages(with message: Message) {
         let newMessage = MessageEntity(context: coreDataManager.context)
-        newMessage.userId = userId
-        newMessage.text = text
-        newMessage.failedToSend = failedToSend
+        newMessage.userId = message.userId
+        newMessage.text = message.text
+        newMessage.failedToSend = message.failedToSend
         
         if NetworkManager.shared.isConnected {
-            newMessage.date = date
+            newMessage.date = message.date
         } else {
             newMessage.date = Constants.Label.errorLabel
         }
@@ -54,15 +66,23 @@ class ChatViewModel {
     }
     
     
-    func numberOfMessages() -> Int {
-        return sentMessages.count
+//    func numberOfMessagesIn() -> Int {
+//        return sentMessages.count
+//    }
+    
+    func numberOfMessages(currentUser: Int) -> Int {
+        let filtered = filteredMessages(currentUser: currentUser)
+        return filtered.count
     }
+
     
     //MARK: - Get a message at a specific index
-    func message(at index: Int) -> MessageEntity {
-        return sentMessages[index]
+//    func message(at index: Int) -> MessageEntity {
+//        return sentMessages[index]
+//    }
+    func message(at index: Int, currentUser: Int) -> MessageEntity {
+        let filtered = filteredMessages(currentUser: currentUser)
+        return filtered[index]
     }
-    
-    
-}
 
+}

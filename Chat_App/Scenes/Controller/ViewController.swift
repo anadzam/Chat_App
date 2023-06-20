@@ -8,8 +8,6 @@
 import UIKit
 
 final class ViewController: UIViewController, SendMessageDelegate {
-   
-    
     
     //MARK: - Properties
     private let switchButton = SwitchButton()
@@ -22,7 +20,7 @@ final class ViewController: UIViewController, SendMessageDelegate {
     lazy var topTextView = topChatView.typingArea
     lazy var bottomTextView = bottomChatView.typingArea
     let userDefaults = UserDefaults.standard
-    
+   
     
     let centerLine: UIView = {
         let line = UIView()
@@ -50,7 +48,8 @@ final class ViewController: UIViewController, SendMessageDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        scrollToBottom()
+        topChatView.scrollToBottom()
+        bottomChatView.scrollToBottom()
     }
     
     //MARK: - Functions
@@ -92,13 +91,16 @@ final class ViewController: UIViewController, SendMessageDelegate {
     }
 
     func sendButton(sender: UIButton) {
-        if sender === topTextView.getSendButton() {
+        var message: Message
+        if sender === topTextView.getSendButton() && !topTextView.textView.text.isEmpty {
             guard let text = topTextView.textView.text else { return }
-            viewModel.sendMessages(with: text, userId: 1, date: formattedDate, failedToSend: !NetworkManager.shared.isConnected)
+             message = Message(text: text, userId: 1, date: formattedDate, failedToSend: !NetworkManager.shared.isConnected)
+            viewModel.sendMessages(with: message)
             topTextView.textView.text = ""
-        } else if sender === bottomTextView.getSendButton() {
+        } else if sender === bottomTextView.getSendButton() && !bottomTextView.textView.text.isEmpty {
             guard let text = bottomTextView.textView.text else { return }
-            viewModel.sendMessages(with: text, userId: 2, date: formattedDate, failedToSend: !NetworkManager.shared.isConnected)
+             message = Message(text: text, userId: 2, date: formattedDate, failedToSend: !NetworkManager.shared.isConnected)
+            viewModel.sendMessages(with: message)
             bottomTextView.textView.text = ""
         }
     }
@@ -123,14 +125,6 @@ final class ViewController: UIViewController, SendMessageDelegate {
             view.backgroundColor = .white
         }
     }
-    
-    func scrollToBottom() {
-        guard viewModel.numberOfMessages() > 1 else { return }
-        let indexPath = IndexPath(item: viewModel.numberOfMessages()-1, section: 0)
-        topChatView.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-        bottomChatView.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-    }
-    
     
     //MARK: - Set up constraints
     private func constraintsAssigner() {
@@ -177,8 +171,11 @@ extension ViewController: ChatViewModelDelegate {
     func messagesLoaded() {
         topChatView.tableView.reloadData()
         bottomChatView.tableView.reloadData()
-        scrollToBottom()
+        topChatView.scrollToBottom()
+        bottomChatView.scrollToBottom()
+       
         
     }
 }
+
 

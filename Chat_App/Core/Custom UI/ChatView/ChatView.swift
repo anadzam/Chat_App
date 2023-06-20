@@ -7,9 +7,9 @@
 
 import UIKit
 
-protocol ChatViewDelegate: AnyObject {
-    func chatView(_ chatView: ChatView, didSendMessageWithText text: String, userId: Int)
-}
+//protocol ChatViewDelegate: AnyObject {
+//    func chatView(_ chatView: ChatView, didSendMessageWithText text: String, userId: Int)
+//}
 
 protocol SendMessageDelegate: AnyObject {
     func sendButton(sender: UIButton)
@@ -67,6 +67,13 @@ class ChatView: UIView {
         typingArea.delegate = self
     }
     
+    func scrollToBottom() {
+        let numberOfRows = tableView.numberOfRows(inSection: 0)
+        guard numberOfRows > 1 else { return }
+        let lastIndexPath = IndexPath(row: numberOfRows - 1, section: 0)
+        tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: true)
+    }
+
     func setUpConstraints() {
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor),
@@ -82,26 +89,18 @@ class ChatView: UIView {
             typingArea.bottomAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.bottomAnchor, constant: Constants.TextView.bottom),
         ])
     }
+    
 }
 
 //MARK: - UITableViewDataSource
-extension ChatView: UITableViewDataSource, UITableViewDelegate {
+extension ChatView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.numberOfMessages()
+        //        viewModel.numberOfMessages()
+        return viewModel.numberOfMessages(currentUser: currentUser)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = viewModel.message(at: indexPath.row)
-        let emptyCell  = UITableViewCell()
-        emptyCell.contentView.isHidden = true
-        emptyCell.isUserInteractionEnabled = false
-        emptyCell.selectionStyle = .none
-        emptyCell.frame.size.height = 0
-        
-        if message.failedToSend && message.userId != currentUser {
-            return emptyCell
-        }
-        
+        let message = viewModel.message(at: indexPath.row, currentUser: currentUser)
         if message.userId == currentUser {
             let sender = tableView.dequeueReusableCell(withIdentifier: Constants.TableView.SenderCellReuseIdentifier, for: indexPath) as! SenderCell
             sender.configure(with: message)
@@ -112,9 +111,7 @@ extension ChatView: UITableViewDataSource, UITableViewDelegate {
             return receiver
         }
     }
-
 }
-
 
 //MARK: - ButtonActionDelegate
 extension ChatView: ButtonActionDelegate {
@@ -127,4 +124,5 @@ extension ChatView: ButtonActionDelegate {
         typingArea.changeColor(color)
     }
 }
+
 

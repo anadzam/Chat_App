@@ -11,6 +11,7 @@
 		9117E00B2A1648B900DF5330 /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9117E00A2A1648B900DF5330 /* Date+Extension.swift */; };
 		9117E0112A165A7C00DF5330 /* ReceiverCell+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9117E0102A165A7C00DF5330 /* ReceiverCell+Extension.swift */; };
 		912B3FBC29FAA4660024AE96 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 912B3FBB29FAA4660024AE96 /* UIImage+Extensions.swift */; };
+		91388F3F2A40341100B83974 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91388F3E2A40341100B83974 /* CoreDataStack.swift */; };
 		918509812A1BA5B500195DDE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918509802A1BA5B500195DDE /* Constants.swift */; };
 		918509832A1BA60300195DDE /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918509822A1BA60300195DDE /* CoreDataManager.swift */; };
 		91A5596A2A1385DC00C2853D /* ReceiverCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A559692A1385DC00C2853D /* ReceiverCell.swift */; };
@@ -36,6 +37,7 @@
 		9117E00A2A1648B900DF5330 /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		9117E0102A165A7C00DF5330 /* ReceiverCell+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReceiverCell+Extension.swift"; sourceTree = "<group>"; };
 		912B3FBB29FAA4660024AE96 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
+		91388F3E2A40341100B83974 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		918509802A1BA5B500195DDE /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		918509822A1BA60300195DDE /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		91A559692A1385DC00C2853D /* ReceiverCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiverCell.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 		91FAD9A42A30FDE8000CFFD2 /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
+				91388F3E2A40341100B83974 /* CoreDataStack.swift */,
 				918509822A1BA60300195DDE /* CoreDataManager.swift */,
 				91A5F74029F2B5C10049F77D /* Chat_App.xcdatamodeld */,
 			);
@@ -329,6 +332,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91388F3F2A40341100B83974 /* CoreDataStack.swift in Sources */,
 				9117E0112A165A7C00DF5330 /* ReceiverCell+Extension.swift in Sources */,
 				91A5F75429F2B92B0049F77D /* SwitchButton.swift in Sources */,
 				9117E00B2A1648B900DF5330 /* Date+Extension.swift in Sources */,
