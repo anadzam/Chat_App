@@ -7,10 +7,6 @@
 
 import UIKit
 
-//protocol ChatViewDelegate: AnyObject {
-//    func chatView(_ chatView: ChatView, didSendMessageWithText text: String, userId: Int)
-//}
-
 protocol SendMessageDelegate: AnyObject {
     func sendButton(sender: UIButton)
 }
@@ -21,6 +17,7 @@ class ChatView: UIView {
     var typingArea = TextView()
     var viewModel = ChatViewModel()
     weak var sendMessageDelegate: SendMessageDelegate?
+    /// if current user value is 1 it means it is sender, if the value is 2 it is reciever
     var currentUser = 1 {
         didSet {
             tableView.reloadData()
@@ -33,7 +30,6 @@ class ChatView: UIView {
         stackView.distribution = .equalSpacing
         stackView.spacing = Constants.StackView.spacing
         stackView.backgroundColor = .clear
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
@@ -49,8 +45,7 @@ class ChatView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureTableView() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+    private func configureTableView() {
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.dataSource = self
@@ -63,7 +58,6 @@ class ChatView: UIView {
         addSubview(stackView)
         stackView.addArrangedSubview(tableView)
         stackView.addArrangedSubview(typingArea)
-        typingArea.translatesAutoresizingMaskIntoConstraints = false
         typingArea.delegate = self
     }
     
@@ -73,30 +67,40 @@ class ChatView: UIView {
         let lastIndexPath = IndexPath(row: numberOfRows - 1, section: 0)
         tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: true)
     }
-
-    func setUpConstraints() {
+    
+    private func setUpConstraints() {
+        setUpTypingAreConstraints()
+        setUpStackViewConstraints()
+        setUpTableViewConstraint()
+    }
+    private func setUpTypingAreConstraints() {
+        NSLayoutConstraint.activate([
+            typingArea.bottomAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.bottomAnchor, constant: Constants.TextView.bottom),
+        ])
+        typingArea.translatesAutoresizingMaskIntoConstraints = false
+    }
+    private func setUpStackViewConstraints() {
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.leftAnchor.constraint(equalTo: leftAnchor, constant: Constants.StackView.gap),
             stackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -Constants.StackView.gap),
             stackView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor)
         ])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    private func setUpTableViewConstraint() {
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: typingArea.topAnchor)
         ])
-        NSLayoutConstraint.activate([
-            typingArea.bottomAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.bottomAnchor, constant: Constants.TextView.bottom),
-        ])
     }
-    
 }
 
 //MARK: - UITableViewDataSource
 extension ChatView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //        viewModel.numberOfMessages()
-        return viewModel.numberOfMessages(currentUser: currentUser)
+        viewModel.numberOfMessages(currentUser: currentUser)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

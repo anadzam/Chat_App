@@ -64,11 +64,7 @@ class ChatViewModel {
         coreDataManager.removeData(entityType: MessageEntity.self)
         delegate?.messagesLoaded()
     }
-    
-    
-//    func numberOfMessagesIn() -> Int {
-//        return sentMessages.count
-//    }
+
     
     func numberOfMessages(currentUser: Int) -> Int {
         let filtered = filteredMessages(currentUser: currentUser)
@@ -77,9 +73,6 @@ class ChatViewModel {
 
     
     //MARK: - Get a message at a specific index
-//    func message(at index: Int) -> MessageEntity {
-//        return sentMessages[index]
-//    }
     func message(at index: Int, currentUser: Int) -> MessageEntity {
         let filtered = filteredMessages(currentUser: currentUser)
         return filtered[index]

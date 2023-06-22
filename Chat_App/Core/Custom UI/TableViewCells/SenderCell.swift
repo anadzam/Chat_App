@@ -12,7 +12,7 @@ class SenderCell: UITableViewCell {
     
     private let label: UILabel = {
         let label = UILabel()
-//        label.textColor = Constant.textColor
+        //        label.textColor = Constant.textColor
         label.numberOfLines = .zero
         label.font = Constants.TextView.font
         return label
@@ -61,7 +61,6 @@ class SenderCell: UITableViewCell {
     private func setUp() {
         backgroundColor = .clear
         setUpBubble()
-        setUpDateLabel()
         setUpLayoutConstraints()
     }
     
@@ -69,16 +68,7 @@ class SenderCell: UITableViewCell {
         contentView.addSubview(bigBubble)
         contentView.addSubview(mediumBubble)
         contentView.addSubview(smallBubble)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        bigBubble.translatesAutoresizingMaskIntoConstraints = false
-        mediumBubble.translatesAutoresizingMaskIntoConstraints = false
-        smallBubble.translatesAutoresizingMaskIntoConstraints = false
-    }
-    
-    
-    private func setUpDateLabel() {
         contentView.addSubview(dateLabel)
-        dateLabel.translatesAutoresizingMaskIntoConstraints = false
     }
     
     func configure(with message: MessageEntity) {
@@ -87,17 +77,28 @@ class SenderCell: UITableViewCell {
         label.textColor = message.failedToSend ? Constant.failedTextColor : Constant.textColor
         dateLabel.textColor = message.failedToSend ? .red : Constants.Colors.placeholderColor
         
-    
-       
-        
     }
     
     private func setUpLayoutConstraints() {
+        setUpBigBubbleConstraints()
+        setUpLabelConstraints()
+        setUpMediumBubbleConstraints()
+        setUpSmallBubbleConstraints()
+        setUpDateLabelConstraints()
+    }
+    
+    private func setUpBigBubbleConstraints() {
+        bigBubble.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             bigBubble.topAnchor.constraint(equalTo: contentView.topAnchor),
             bigBubble.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor,
-                                                constant: -Bubble.leading),
-            
+                                                constant: -Bubble.leading)
+        ])
+    }
+    
+    private func setUpLabelConstraints() {
+        label.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: bigBubble.topAnchor,
                                        constant: Label.top),
             label.leadingAnchor.constraint(equalTo: bigBubble.leadingAnchor,
@@ -105,23 +106,37 @@ class SenderCell: UITableViewCell {
             label.trailingAnchor.constraint(equalTo: bigBubble.trailingAnchor,
                                             constant: -Label.trailing),
             label.bottomAnchor.constraint(equalTo: bigBubble.bottomAnchor,
-                                          constant: -Label.bottom),
-            
+                                          constant: -Label.bottom)
+        ])
+    }
+    
+    private func setUpMediumBubbleConstraints() {
+        mediumBubble.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
             mediumBubble.trailingAnchor.constraint(equalTo: bigBubble.trailingAnchor,
                                                    constant: MiddleBubble.leading),
             mediumBubble.bottomAnchor.constraint(equalTo: bigBubble.bottomAnchor,
                                                  constant: MiddleBubble.bottom),
             mediumBubble.widthAnchor.constraint(equalToConstant: MiddleBubble.width),
-            mediumBubble.heightAnchor.constraint(equalToConstant: MiddleBubble.height),
-            
+            mediumBubble.heightAnchor.constraint(equalToConstant: MiddleBubble.height)
+        ])
+    }
+    
+    private func setUpSmallBubbleConstraints() {
+        smallBubble.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
             smallBubble.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
                                                   constant: .zero),
             smallBubble.bottomAnchor.constraint(equalTo: contentView.bottomAnchor,
                                                 constant: -SmallBubble.bottom),
             smallBubble.widthAnchor.constraint(equalToConstant: SmallBubble.width),
             smallBubble.heightAnchor.constraint(equalToConstant: SmallBubble.height),
-            
-            
+        ])
+    }
+    
+    private func setUpDateLabelConstraints() {
+        dateLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
             dateLabel.topAnchor.constraint(equalTo: bigBubble.bottomAnchor,
                                            constant: DateLabel.top),
             dateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
@@ -130,5 +145,5 @@ class SenderCell: UITableViewCell {
                                               constant: -DateLabel.bottom)
         ])
     }
+    
 }
-
