@@ -15,8 +15,8 @@ protocol ChatViewModelDelegate: AnyObject {
 class ChatViewModel {
     weak var delegate: ChatViewModelDelegate?
     private let coreDataManager = CoreDataManager()
-    private lazy var sentMessages = [MessageEntity]()
-  
+    lazy var sentMessages = [MessageEntity]()
+      
     
     func filteredMessages(currentUser: Int) -> [MessageEntity] {
         var filtered = [MessageEntity]()
@@ -28,7 +28,7 @@ class ChatViewModel {
         }
         return filtered
     }
-
+   
     
     //MARK: - Load messages from coreData
     func loadMessages() {
@@ -64,18 +64,18 @@ class ChatViewModel {
         coreDataManager.removeData(entityType: MessageEntity.self)
         delegate?.messagesLoaded()
     }
-
+    
     
     func numberOfMessages(currentUser: Int) -> Int {
         let filtered = filteredMessages(currentUser: currentUser)
         return filtered.count
     }
-
+    
     
     //MARK: - Get a message at a specific index
     func message(at index: Int, currentUser: Int) -> MessageEntity {
         let filtered = filteredMessages(currentUser: currentUser)
         return filtered[index]
     }
-
+    
 }

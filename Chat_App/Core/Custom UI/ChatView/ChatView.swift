@@ -15,14 +15,14 @@ class ChatView: UIView {
     
     let tableView = UITableView()
     var typingArea = TextView()
-    var viewModel = ChatViewModel()
     weak var sendMessageDelegate: SendMessageDelegate?
-    /// if current user value is 1 it means it is sender, if the value is 2 it is reciever
+    /// if current user value is 1 it means it it was sent from top chatview
     var currentUser = 1 {
         didSet {
             tableView.reloadData()
         }
     }
+    var messagesArray: [MessageEntity] = []
     
     private let stackView: UIStackView = {
         let stackView = UIStackView()
@@ -33,9 +33,8 @@ class ChatView: UIView {
         return stackView
     }()
     
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init() {
+        super.init(frame: .zero)
         setUpStackView()
         setUpConstraints()
         configureTableView()
@@ -100,11 +99,14 @@ class ChatView: UIView {
 //MARK: - UITableViewDataSource
 extension ChatView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.numberOfMessages(currentUser: currentUser)
+        //        viewModel.numberOfMessages(currentUser: currentUser)
+        messagesArray.count
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = viewModel.message(at: indexPath.row, currentUser: currentUser)
+        //        let message = viewModel.message(at: indexPath.row, currentUser: currentUser)
+        let message = messagesArray[indexPath.row]
         if message.userId == currentUser {
             let sender = tableView.dequeueReusableCell(withIdentifier: Constants.TableView.SenderCellReuseIdentifier, for: indexPath) as! SenderCell
             sender.configure(with: message)
@@ -122,7 +124,6 @@ extension ChatView: ButtonActionDelegate {
     func buttonTapped(sender: UIButton) {
         sendMessageDelegate?.sendButton(sender: sender)
     }
-    
     
     func changeTextColor(color: UIColor) {
         typingArea.changeColor(color)

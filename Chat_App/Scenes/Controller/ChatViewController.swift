@@ -7,20 +7,21 @@
 
 import UIKit
 
-final class ViewController: UIViewController, SendMessageDelegate {
+final class ChatViewController: UIViewController, SendMessageDelegate {
     
     //MARK: - Properties
     private let switchButton = SwitchButton()
-    private lazy var topChatView = ChatView()
-    private lazy var bottomChatView = ChatView()
+    //    private lazy var topChatView = ChatView()
+    //    private lazy var bottomChatView = ChatView()
     private let viewModel = ChatViewModel()
     private let textView = TextView()
     private lazy var currentDate = Date()
+    //    private lazy var chatView = ChatView()
     private lazy var formattedDate = DateFormatter.formatCustomDate(currentDate)
     lazy var topTextView = topChatView.typingArea
     lazy var bottomTextView = bottomChatView.typingArea
     let userDefaults = UserDefaults.standard
-    
+    private var messagesArray: [MessageEntity] = []
     
     let centerLine: UIView = {
         let line = UIView()
@@ -28,6 +29,19 @@ final class ViewController: UIViewController, SendMessageDelegate {
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
+    private lazy var topChatView: ChatView = {
+        let topChatView = ChatView()
+        topChatView.currentUser = 1
+        return topChatView
+    }()
+    
+    private lazy var bottomChatView: ChatView = {
+        let bottomChatView = ChatView()
+        bottomChatView.currentUser = 2
+        return bottomChatView
+    }()
+    
+    
     
     //MARK: - Override
     override func viewDidLoad() {
@@ -35,14 +49,11 @@ final class ViewController: UIViewController, SendMessageDelegate {
         switchButton.addTarget(self, action: #selector(switchButtonTapped), for: .touchUpInside)
         setUpLayout()
         setUpConstraints()
-        viewModel.loadMessages()
-        //        viewModel.removeMessages()
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        topChatView.currentUser = 1
-        bottomChatView.currentUser = 2
         checkSwithcState()
         addDelegates()
         hideKeyboard()
+        //        viewModel.removeMessages()
+        viewModel.loadMessages()
         
     }
     
@@ -54,8 +65,6 @@ final class ViewController: UIViewController, SendMessageDelegate {
     
     //MARK: - Functions
     private func setUpLayout() {
-        topChatView.viewModel = viewModel
-        bottomChatView.viewModel = viewModel
         switchButton.translatesAutoresizingMaskIntoConstraints = false
         topChatView.translatesAutoresizingMaskIntoConstraints = false
         bottomChatView.translatesAutoresizingMaskIntoConstraints = false
@@ -82,13 +91,10 @@ final class ViewController: UIViewController, SendMessageDelegate {
             chatView.changeTextColor(color: switchButton.isOn ? Constants.Colors.darkModeTextColor : Constants.Colors.textColor)
         }
         
-        if switchButton.isOn {
-            userDefaults.set(true, forKey: "isOn")
-            
-        }else {
-            userDefaults.set(false, forKey: "isOn")
-        }
+        userDefaults.set(switchButton.isOn ? true : false, forKey: "isOn")
     }
+    
+    
     
     func sendButton(sender: UIButton) {
         var message: Message
@@ -106,7 +112,7 @@ final class ViewController: UIViewController, SendMessageDelegate {
     }
     
     
-    func hideKeyboard() {
+    private func hideKeyboard() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
@@ -116,7 +122,8 @@ final class ViewController: UIViewController, SendMessageDelegate {
         view.endEditing(true)
     }
     
-    func checkSwithcState() {
+    
+    private func checkSwithcState() {
         if userDefaults.bool(forKey: "isOn") {
             switchButton.isOn = false
             view.backgroundColor = Constants.Colors.darkMode
@@ -173,13 +180,14 @@ final class ViewController: UIViewController, SendMessageDelegate {
 }
 
 //MARK: - ChatViewModelDelegate
-extension ViewController: ChatViewModelDelegate {
+extension ChatViewController: ChatViewModelDelegate {
     func messagesLoaded() {
+        topChatView.messagesArray = viewModel.filteredMessages(currentUser: 1)
+        bottomChatView.messagesArray = viewModel.filteredMessages(currentUser: 2)
         topChatView.tableView.reloadData()
         bottomChatView.tableView.reloadData()
         topChatView.scrollToBottom()
         bottomChatView.scrollToBottom()
-        
         
     }
 }
