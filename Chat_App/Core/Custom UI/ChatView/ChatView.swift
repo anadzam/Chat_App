@@ -99,13 +99,11 @@ class ChatView: UIView {
 //MARK: - UITableViewDataSource
 extension ChatView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //        viewModel.numberOfMessages(currentUser: currentUser)
         messagesArray.count
         
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //        let message = viewModel.message(at: indexPath.row, currentUser: currentUser)
         let message = messagesArray[indexPath.row]
         if message.userId == currentUser {
             let sender = tableView.dequeueReusableCell(withIdentifier: Constants.TableView.SenderCellReuseIdentifier, for: indexPath) as! SenderCell

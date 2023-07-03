@@ -16,7 +16,7 @@ class ChatViewModel {
     weak var delegate: ChatViewModelDelegate?
     private let coreDataManager = CoreDataManager()
     lazy var sentMessages = [MessageEntity]()
-      
+    
     
     func filteredMessages(currentUser: Int) -> [MessageEntity] {
         var filtered = [MessageEntity]()
@@ -28,7 +28,7 @@ class ChatViewModel {
         }
         return filtered
     }
-   
+    
     
     //MARK: - Load messages from coreData
     func loadMessages() {
@@ -42,11 +42,11 @@ class ChatViewModel {
     
     //MARK: - Create new Message
     func sendMessages(with message: Message) {
+        
         let newMessage = MessageEntity(context: coreDataManager.context)
         newMessage.userId = message.userId
         newMessage.text = message.text
         newMessage.failedToSend = message.failedToSend
-        
         if NetworkManager.shared.isConnected {
             newMessage.date = message.date
         } else {

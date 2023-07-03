@@ -11,12 +11,9 @@ final class ChatViewController: UIViewController, SendMessageDelegate {
     
     //MARK: - Properties
     private let switchButton = SwitchButton()
-    //    private lazy var topChatView = ChatView()
-    //    private lazy var bottomChatView = ChatView()
     private let viewModel = ChatViewModel()
     private let textView = TextView()
     private lazy var currentDate = Date()
-    //    private lazy var chatView = ChatView()
     private lazy var formattedDate = DateFormatter.formatCustomDate(currentDate)
     lazy var topTextView = topChatView.typingArea
     lazy var bottomTextView = bottomChatView.typingArea
@@ -52,7 +49,7 @@ final class ChatViewController: UIViewController, SendMessageDelegate {
         checkSwithcState()
         addDelegates()
         hideKeyboard()
-        //        viewModel.removeMessages()
+        //                viewModel.removeMessages()
         viewModel.loadMessages()
         
     }
@@ -93,7 +90,6 @@ final class ChatViewController: UIViewController, SendMessageDelegate {
         
         userDefaults.set(switchButton.isOn ? true : false, forKey: "isOn")
     }
-    
     
     
     func sendButton(sender: UIButton) {
